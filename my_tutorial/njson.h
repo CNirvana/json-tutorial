@@ -1,6 +1,6 @@
 #pragma once
 
-enum NType
+enum NJsonType
 {
     Null,
     False,
@@ -10,12 +10,17 @@ enum NType
     Object
 };
 
-struct NValue
+struct NJsonValue
 {
-    NType type;
+    NJsonType type;
 };
 
-enum NParseResult
+struct NJsonContext
+{
+    const char* json;
+};
+
+enum NJsonParseResult
 {
     OK = 0,
     ExpectValue,
@@ -23,6 +28,14 @@ enum NParseResult
     RootNotSingular
 };
 
-int NParse(NValue* v, const char* json);
+class NJson
+{
+public:
+    NJsonParseResult Parse(NJsonValue* v, const char* json);
+    NJsonType GetType(const NJsonValue* v);
 
-NType NGetType(const NValue* v);
+private:
+    void ParseWhitespace(NJsonContext* c);
+    NJsonParseResult ParseNull(NJsonContext* c, NJsonValue* v);
+    NJsonParseResult ParseValue(NJsonContext* c, NJsonValue* v);
+};

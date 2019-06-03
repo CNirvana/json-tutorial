@@ -4,12 +4,7 @@
 
 #define EXPECT(c, ch) do { assert(*c->json == (ch)); c->json++; } while(0)
 
-struct NContext
-{
-    const char* json;
-};
-
-static void NParseWhitespace(NContext* c)
+void NJson::ParseWhitespace(NJsonContext* c)
 {
     const char *p = c->json;
     while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r')
@@ -17,36 +12,49 @@ static void NParseWhitespace(NContext* c)
     c->json = p;
 }
 
-static NParseResult NParseNull(NContext* c, NValue* v)
+NJsonParseResult NJson::ParseNull(NJsonContext* c, NJsonValue* v)
 {
     EXPECT(c, 'n');
     if (c->json[0] != 'u' || c->json[1] != 'l' || c->json[2] != 'l')
-        return NParseResult::InvalidValue;
+        return NJsonParseResult::InvalidValue;
     c->json += 3;
-    v->type = NType::Null;
-    return NParseResult::OK;
+    v->type = NJsonType::Null;
+    return NJsonParseResult::OK;
 }
 
-static int NParseValue(NContext* c, NValue* v) {
+NJsonParseResult NJson::ParseValue(NJsonContext* c, NJsonValue* v)
+{
     switch (*c->json)
     {
-        case 'n':  return NParseNull(c, v);
-        case '\0': return NParseResult::ExpectValue;
-        default:   return NParseResult::InvalidValue;
+        case 'n':  return ParseNull(c, v);
+        case '\0': return NJsonParseResult::ExpectValue;
+        default:   return NJsonParseResult::InvalidValue;
     }
 }
 
-int NParse(NValue* v, const char* json)
+NJsonParseResult NJson::Parse(NJsonValue* v, const char* json)
 {
-    NContext c;
+    NJsonParseResult ret;
+
+    NJsonContext c;
     assert(v != NULL);
     c.json = json;
-    v->type = NType::Null;
-    NParseWhitespace(&c);
-    return NParseValue(&c, v);
+    v->type = NJsonType::Null;
+    ParseWhitespace(&c);
+
+    if ((ret = ParseValue(&c, v)) == NJsonParseResult::OK)
+    {
+        ParseWhitespace(&c);
+        if (*c.json != '\0')
+        {
+            ret = NJsonParseResult::RootNotSingular;
+        }
+    }
+
+    return ret;
 }
 
-NType NGetType(const NValue* v)
+NJsonType NJson::GetType(const NJsonValue* v)
 {
     assert(v != NULL);
     return v->type;

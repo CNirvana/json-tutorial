@@ -22,43 +22,48 @@ static int test_pass = 0;
 
 static void test_parse_null()
 {
-    NValue v;
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::OK, NParse(&v, "null"));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    NJson json;
+    NJsonValue v;
+    v.type = NJsonType::False;
+
+    EXPECT_EQ_INT(NJsonParseResult::OK, json.Parse(&v, "null"));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 }
 
 static void test_parse_expect_value()
 {
-    NValue v;
+    NJson json;
+    NJsonValue v;
 
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::ExpectValue, NParse(&v, ""));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    v.type = NJsonType::False;
+    EXPECT_EQ_INT(NJsonParseResult::ExpectValue, json.Parse(&v, ""));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::ExpectValue, NParse(&v, " "));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    v.type = NJsonType::False;
+    EXPECT_EQ_INT(NJsonParseResult::ExpectValue, json.Parse(&v, " "));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 }
 
 static void test_parse_invalid_value()
 {
-    NValue v;
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::InvalidValue, NParse(&v, "nul"));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    NJson json;
+    NJsonValue v;
+    v.type = NJsonType::False;
+    EXPECT_EQ_INT(NJsonParseResult::InvalidValue, json.Parse(&v, "nul"));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::InvalidValue, NParse(&v, "?"));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    v.type = NJsonType::False;
+    EXPECT_EQ_INT(NJsonParseResult::InvalidValue, json.Parse(&v, "?"));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 }
 
 static void test_parse_root_not_singular()
 {
-    NValue v;
-    v.type = NType::False;
-    EXPECT_EQ_INT(NParseResult::RootNotSingular, NParse(&v, "null x"));
-    EXPECT_EQ_INT(NType::Null, NGetType(&v));
+    NJson json;
+    NJsonValue v;
+    v.type = NJsonType::False;
+    EXPECT_EQ_INT(NJsonParseResult::RootNotSingular, json.Parse(&v, "null x"));
+    EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 }
 
 static void test_parse()
