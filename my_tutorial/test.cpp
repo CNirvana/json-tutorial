@@ -30,6 +30,26 @@ static void test_parse_null()
     EXPECT_EQ_INT(NJsonType::Null, json.GetType(&v));
 }
 
+static void test_parse_true()
+{
+    NJson json;
+    NJsonValue v;
+    v.type = NJsonType::False;
+
+    EXPECT_EQ_INT(NJsonParseResult::OK, json.Parse(&v, "true"));
+    EXPECT_EQ_INT(NJsonType::True, json.GetType(&v));
+}
+
+static void test_parse_false()
+{
+    NJson json;
+    NJsonValue v;
+    v.type = NJsonType::False;
+
+    EXPECT_EQ_INT(NJsonParseResult::OK, json.Parse(&v, "false"));
+    EXPECT_EQ_INT(NJsonType::False, json.GetType(&v));
+}
+
 static void test_parse_expect_value()
 {
     NJson json;
@@ -69,6 +89,8 @@ static void test_parse_root_not_singular()
 static void test_parse()
 {
     test_parse_null();
+    test_parse_true();
+    test_parse_false();
     test_parse_expect_value();
     test_parse_invalid_value();
     test_parse_root_not_singular();

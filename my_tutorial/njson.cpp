@@ -22,13 +22,35 @@ NJsonParseResult NJson::ParseNull(NJsonContext* c, NJsonValue* v)
     return NJsonParseResult::OK;
 }
 
+NJsonParseResult NJson::ParseTrue(NJsonContext* c, NJsonValue* v)
+{
+    EXPECT(c, 't');
+    if (c->json[0] != 'r' || c->json[1] != 'u' || c->json[2] != 'e')
+        return NJsonParseResult::InvalidValue;
+    c->json += 3;
+    v->type = NJsonType::True;
+    return NJsonParseResult::OK;
+}
+
+NJsonParseResult NJson::ParseFalse(NJsonContext* c, NJsonValue* v)
+{
+    EXPECT(c, 'f');
+    if (c->json[0] != 'a' || c->json[1] != 'l' || c->json[2] != 's' || c->json[3] != 'e')
+        return NJsonParseResult::InvalidValue;
+    c->json += 4;
+    v->type = NJsonType::False;
+    return NJsonParseResult::OK;
+}
+
 NJsonParseResult NJson::ParseValue(NJsonContext* c, NJsonValue* v)
 {
     switch (*c->json)
     {
-        case 'n':  return ParseNull(c, v);
-        case '\0': return NJsonParseResult::ExpectValue;
-        default:   return NJsonParseResult::InvalidValue;
+        case 'n':   return ParseNull(c, v);
+        case 't':   return ParseTrue(c, v);
+        case 'f':   return ParseFalse(c, v);
+        case '\0':  return NJsonParseResult::ExpectValue;
+        default:    return NJsonParseResult::InvalidValue;
     }
 }
 

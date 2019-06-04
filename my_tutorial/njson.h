@@ -37,5 +37,7 @@ public:
 private:
     void ParseWhitespace(NJsonContext* c);
     NJsonParseResult ParseNull(NJsonContext* c, NJsonValue* v);
+    NJsonParseResult ParseTrue(NJsonContext* c, NJsonValue* v);
+    NJsonParseResult ParseFalse(NJsonContext* c, NJsonValue* v);
     NJsonParseResult ParseValue(NJsonContext* c, NJsonValue* v);
 };
